@@ -1,0 +1,83 @@
+<project name="MyProject" default="deploy" basedir=".">
+    <description>
+        simple example build file
+    </description>
+  <!-- set global properties for this build -->
+  <property name="src" location="D:/CG/Projects/StageStore/Code/TestATG"/>
+  <property name="build" location="C:/ATG/ATG10.2/MyTestModules"/>
+  <property name="atg_home" value="C:/ATG/ATG10.2/home" />
+  <property name="assemble.cmd.servername"    value="-server SS" />
+  <property name="assemble.cmd.bccservername"    value="-server ATGTESTSERVER_PUB" />
+  
+  <property name="ear.todeploy.destination" value="C:/jboss-5.1.0.GA/server/SS/deploy" />
+  <property name="bccear.todeploy.destination" value="C:/jboss-5.1.0.GA/server/atg_production_lockserver/deploy" />
+	
+  <property name="ear.todeploy.filename" value="myEar" />
+  <property name="ear.todeploy.bccfilename" value="ATGTESTSERVER_PUB" />	
+	
+  <property name="assemble.cmd.modules" value="DafEar.Admin DPS DSS DCS MyTestModules.Test MyTestModules.TestWeb" />
+  <property name="assemble.bcc.modules" value="DCS.Versioned DCS.DynamicCustomCatalogs.Versioned DAS.Versioned DCS-UI.SiteAdmin.Versioned" />
+
+  <target name="init" depends="clean">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+  	
+  	<mkdir dir="${build}/Test/config"/>
+  	<mkdir dir="${build}/Test/config/lib/com"/>
+  	<mkdir dir="${build}/TestWeb/j2ee-apps/TestWeb/test.war"/>
+  	
+  </target>
+	
+  <target name="copy" depends="init"
+        description="generate the distribution" >
+  	<copy todir="${build}/Test/config">
+  	    <fileset dir="${src}/modules/MyTestModules/Test/config"/>
+  	</copy>
+  	
+  	<copy todir="${build}/Test/lib/com">
+  	    <fileset dir="${src}/bin/com"/>
+  	</copy>
+  	
+  	<copy todir="${build}/TestWeb/j2ee-apps/TestWeb/test.war">
+  	    <fileset dir="${src}/modules/MyTestModules/TestWeb/j2ee/test.war"/>
+  	</copy>  	
+  </target>
+	
+  <target name="deploy" depends="copy"
+	   description="Deploy EAR to JBoss">
+  	<echo message="Local Dev Build" />
+  	<echo message="ATG HOME = ${atg_home}" />  	
+  	
+  	<exec dir="${atg_home}/bin/" vmlauncher="false"
+            executable="runAssembler" failonerror="yes">
+          <arg value="-overwrite" />
+          <arg value="-omit-licenses"/>
+  	
+  		  <arg value="-run-in-place" />
+  	  
+          <arg line="${assemble.cmd.servername}" />
+          <arg value="${ear.todeploy.destination}/${ear.todeploy.filename}"/>
+	 	  <arg line="-m ${assemble.cmd.modules}" />
+      </exec>
+  	<!--
+  	<exec dir="${atg_home}/bin/" vmlauncher="false"
+  	            executable="runAssembler" failonerror="yes">
+  	          <arg value="-overwrite" />
+  	          <arg value="-omit-licenses"/>
+  	  		  <arg value="-run-in-place" />
+  	          <arg line="${assemble.cmd.bccservername}" />
+  	          <arg value="${bccear.todeploy.destination}/${ear.todeploy.bccfilename}"/>
+  		 	  <arg line="-m ${assemble.bcc.modules}" />
+  	      </exec>
+  	      -->
+  </target>
+
+  <target name="clean"
+        description="clean up" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}/Test/config"/>
+  	<delete dir="${build}/Test/config/lib/com"/>
+  	<delete dir="${build}/TestWeb/j2ee-apps/TestWeb/test.war"/>
+  </target>
+</project>

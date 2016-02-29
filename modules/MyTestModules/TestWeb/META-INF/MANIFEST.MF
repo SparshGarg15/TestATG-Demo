@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.8.2
+Created-By: 1.6.0_29-b11 (Sun Microsystems Inc.)
+ATG-Product: Test ATG App
+ATG-Web-Module: j2ee-apps/TestWeb/test.war
+ATG-Required: MyTestModules.Test

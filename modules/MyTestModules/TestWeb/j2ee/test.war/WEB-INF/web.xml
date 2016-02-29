@@ -1,0 +1,86 @@
+<?xml version="1.0" ?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+
+<display-name>Test ATG APP</display-name>
+
+<context-param>
+	<param-name>atg.session.parentContextName</param-name>
+	<param-value>/dyn</param-value>
+</context-param>
+
+
+<context-param>
+	<param-name>atg.dafear.bootstrapContextName</param-name>
+	<param-value>/dyn</param-value>
+</context-param>
+
+
+<!--
+	If context-root is set here, then ServletContextWebAppRegistry will use
+	this setting as the context-root for this WebApp. This must match
+	the context-root setting in application.xml.
+-->
+<context-param>
+	<param-name>context-root</param-name>
+	<param-value>test</param-value>
+</context-param>
+<context-param>
+	<param-name>atg.assembler</param-name>
+	<param-value>false</param-value>
+</context-param>
+
+<!--
+	To use ATG platform functionality, a Web application on a 3rd party application
+	server needs to start Nucleus by invoking NucleusSerlvet. This servlet does not
+	need to have any paths mapped to it, but must have the load-on-startup flag set
+	to 1 so that it runs before any other ATG component. The NucleusServlet creates
+	an instance of Nucleus and sets it as an attribute of the web application.
+-->
+
+<servlet>
+	<servlet-name>NucleusServlet</servlet-name>
+	<servlet-class>
+	atg.nucleus.servlet.NucleusServlet
+	</servlet-class>
+	<load-on-startup>1</load-on-startup>
+</servlet>
+
+
+<servlet>
+	<servlet-name>DynamoProxyServlet</servlet-name>
+	<servlet-class>
+	atg.nucleus.servlet.NucleusProxyServlet
+	</servlet-class>
+	<load-on-startup>2</load-on-startup>
+</servlet>
+
+
+
+<servlet-mapping>
+	<servlet-name>DynamoProxyServlet</servlet-name>
+	<url-pattern>/dyn/*</url-pattern>
+</servlet-mapping>
+
+
+<!-- For diagnostic purposes only  -->
+<servlet-mapping>
+	<servlet-name>NucleusServlet</servlet-name>
+	<url-pattern>/nucleus/*</url-pattern>
+</servlet-mapping>
+
+
+<welcome-file-list>
+	<welcome-file>index.jsp</welcome-file>
+</welcome-file-list>
+
+<listener>
+	<listener-class>atg.taglib.dspjsp.RegisterELResolverServletContextListener</listener-class>
+</listener>
+
+
+
+</web-app>
